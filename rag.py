@@ -1,4 +1,6 @@
 from uuid import uuid4
+import os
+import streamlit as st
 from dotenv import load_dotenv
 from pathlib import Path
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -13,7 +15,12 @@ from langchain_classic.chains.combine_documents import create_stuff_documents_ch
 from langchain_core.prompts import ChatPromptTemplate
 
 
+
 load_dotenv()
+GROQ_API_KEY = st.secrets.get(
+    "GROQ_API_KEY",
+    os.getenv("GROQ_API_KEY")
+)
 CHUNK_SIZE = 1000
 EMBEDDING_MODEL = "nomic-ai/nomic-embed-text-v1"
 VECTORSTORE_DIR = Path(__file__).parent/ "resources/vectorstore"
@@ -27,13 +34,15 @@ def initialize_components():
     These objects are expensive to create, so we cache them
     for the lifetime of the Streamlit process.
     """
+    
     global llm, vector_store
 
     if llm is None:
         llm = ChatGroq(
             model="llama-3.3-70b-versatile",
             temperature=0.9,
-            max_tokens=500
+            max_tokens=500,
+            api_key= GROQ_API_KEY
         )
 
     if vector_store is None:
