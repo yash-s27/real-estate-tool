@@ -13,4 +13,4 @@ requests
 lxml
 torch
 torchvision
-einops
+eniops
